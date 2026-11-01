@@ -1,6 +1,7 @@
 "use client";
 
 import { StoryEpisode } from "../data/storyEpisodes";
+import { appConfirm } from "@/lib/appDialog";
 
 interface StoryModeLobbyProps {
   episodes: StoryEpisode[];
@@ -283,8 +284,8 @@ export default function StoryModeLobby({
       {onResetProgress && clearedEpisodeIds.length > 0 && (
         <div className="text-center pt-2">
           <button
-            onClick={() => {
-              if (confirm("스토리 진행 기록을 처음부터 다시 시작하시겠습니까?")) {
+            onClick={async () => {
+              if (await appConfirm("스토리 진행 기록을 처음부터 다시 시작하시겠습니까?")) {
                 onResetProgress();
               }
             }}

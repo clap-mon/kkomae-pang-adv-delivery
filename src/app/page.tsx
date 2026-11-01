@@ -27,6 +27,7 @@ import {
   startBgm,
   unlockAudioContext,
 } from "../lib/soundEffects";
+import { appAlert, appConfirm } from "@/lib/appDialog";
 
 // --- 스토리 및 바느질 기법 타입 ---
 export type CourseId = "running" | "backstitch" | "button" | "quiz";
@@ -628,9 +629,9 @@ export default function KkomaePangPage() {
   }, [courseProgress, currentCourseId, selectedThread, selectedNeedle, selectedFabric, studentName]);
 
   // 🔄 재봉함 획득 별 및 진행도 안전 초기화 핸들러
-  const handleResetAllProgress = () => {
+  const handleResetAllProgress = async () => {
     if (typeof window === "undefined") return;
-    const isConfirmed = window.confirm(
+    const isConfirmed = await appConfirm(
       "정말 획득한 별과 재봉함 기록을 초기화할까요?\n모든 코스 진행도가 1단계로 되돌아가고 기본 도구(클래식 레드 실, 실버 메탈 바늘, 모던 웜베이지 원단)로 초기화됩니다."
     );
     if (!isConfirmed) return;
@@ -656,7 +657,7 @@ export default function KkomaePangPage() {
     }
 
     playPassSound();
-    alert("🌟 모든 별과 진행도가 안전하게 초기화되었습니다!");
+    appAlert("🌟 모든 별과 진행도가 안전하게 초기화되었습니다!");
   };
 
   // 🪡 바느질 구멍 좌표 (튜토리얼 또는 스토리 에피소드에서 직접 로드)
