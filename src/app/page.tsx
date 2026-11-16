@@ -262,16 +262,21 @@ export default function KkomaePangPage() {
         (/iPhone|iPod|BlackBerry|IEMobile|Opera Mini|Windows Phone/i.test(ua) ||
           (/Android/i.test(ua) && /Mobile/i.test(ua)));
 
-      // 3. 화면 크기 단변 판별 (가로/세로 회전 고려)
-      const shortestDimension = Math.min(window.innerWidth, window.innerHeight);
-      const screenShortest =
-        typeof window.screen !== "undefined"
-          ? Math.min(window.screen.width, window.screen.height)
-          : shortestDimension;
+      // 크롬북(CrOS)은 무조건 허용
+      if (/CrOS/i.test(ua)) {
+        setShowMobileNotice(false);
+        return;
+      }
 
-      // 스마트폰 UA이거나 화면 단변이 680px 미만인 소형 스마트폰 환경이면 즉시 차단
-      const isMobileDevice =
-        isPhoneUA || (!isTablet && (shortestDimension < 680 || screenShortest < 680));
+      // 3. 터치 기기이면서 기기 화면(screen)의 짧은 변이 휴대폰 크기일 때만 차단
+      //    - 창 크기(innerWidth/innerHeight)는 쓰지 않음: issamgpt 등 플랫폼이 iframe으로
+      //      창을 작게 띄우면 PC도 스마트폰으로 오인되기 때문
+      //    - 데스크톱 모드로 UA를 바꾼 휴대폰을 막기 위한 보조 체크
+      const isTouchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+      const screenShortest = Math.min(window.screen.width, window.screen.height);
+      const isPhoneSize = screenShortest < 600;
+
+      const isMobileDevice = isPhoneUA || (!isTablet && isTouchDevice && isPhoneSize);
 
       setShowMobileNotice(isMobileDevice);
     };
